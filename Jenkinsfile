@@ -4,9 +4,10 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git 'https://github.com/Raunakmali08/Spotify-clone-.git'
             }
         }
+
         stage('Build Backend Image') {
             steps {
                 dir('backend') {
@@ -14,6 +15,7 @@ pipeline {
                 }
             }
         }
+
         stage('Build Frontend Image') {
             steps {
                 dir('frontend') {
@@ -21,15 +23,19 @@ pipeline {
                 }
             }
         }
-        stage('Start Services') {
+
+        stage('Run Containers') {
             steps {
-                sh 'docker-compose up -d --build'
+                sh 'docker run -d -p 5000:5000 --name backend spotify-backend'
+                sh 'docker run -d -p 80:80 --name frontend spotify-frontend'
             }
         }
     }
+
     post {
         always {
-            echo 'Pipeline done!'
+            echo "Pipeline done!"
         }
     }
 }
+
